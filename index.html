@@ -7,427 +7,201 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap');
   :root {
-    --bg: #0a0a0f; --surface: #13131a; --surface2: #1c1c26;
-    --border: #2a2a38; --blu: #415FF2; --green: #37D3A4;
-    --red: #ff5a5a; --yellow: #ffd047; --text: #f0f0f8; --muted: #6b6b88;
+    --bg:#0a0a0f; --surface:#13131a; --surface2:#1c1c26;
+    --border:#2a2a38; --blu:#415FF2; --green:#37D3A4;
+    --red:#ff5a5a; --yellow:#ffd047; --text:#f0f0f8; --muted:#6b6b88;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 28px 32px; max-width: 960px; margin: 0 auto; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; padding:28px 32px; max-width:960px; margin:0 auto; }
 
-  /* HEADER */
-  .header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; gap: 16px; flex-wrap: wrap; }
-  .header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
-  .header p { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  h1 { font-size:22px; font-weight:700; margin-bottom:4px; }
+  .sub { font-size:13px; color:var(--muted); margin-bottom:24px; }
 
+  /* WEEK SELECTOR */
   .week-bar {
-    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 10px; padding: 10px 16px; margin-bottom: 24px;
-    font-size: 13px;
+    display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+    background:var(--surface2); border:1px solid var(--border);
+    border-radius:10px; padding:12px 18px; margin-bottom:20px;
   }
-  .week-bar label { color: var(--muted); font-size: 12px; }
-  .week-bar input[type=date], .week-bar select {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 6px; padding: 5px 10px; color: var(--text);
-    font-family: 'DM Mono', monospace; font-size: 12px; outline: none;
+  .week-bar label { font-size:12px; color:var(--muted); font-weight:600; }
+  .week-controls { display:flex; align-items:center; gap:10px; }
+  .week-controls select {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:6px; padding:6px 10px; color:var(--text);
+    font-family:'DM Mono',monospace; font-size:13px; outline:none; cursor:pointer;
   }
-  .week-bar span { color: var(--muted); font-size: 11px; font-family: 'DM Mono', monospace; }
+  .week-controls select option { background:#1c1c26; }
+  .week-range { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); margin-left:4px; }
 
-  /* CONFIG */
-  .config-card {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 12px; padding: 20px 24px; margin-bottom: 24px;
-  }
-  .config-card h3 { font-size: 13px; font-weight: 600; margin-bottom: 14px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; }
-  .config-row { display: grid; grid-template-columns: 180px 1fr; gap: 10px; align-items: center; margin-bottom: 10px; }
-  .config-row label { font-size: 12px; color: var(--muted); }
-  .config-row input {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 6px; padding: 7px 12px; color: var(--text);
-    font-family: 'DM Mono', monospace; font-size: 12px; outline: none; width: 100%;
-  }
-  .config-row input:focus { border-color: var(--blu); }
-
-  /* FETCH BUTTON */
+  /* BUTTON */
   .fetch-btn {
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    width: 100%; padding: 13px;
-    background: var(--blu); border: none; border-radius: 10px;
-    color: white; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
-    cursor: pointer; margin-bottom: 24px; transition: opacity 0.15s;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    width:100%; padding:13px; background:var(--blu); border:none; border-radius:10px;
+    color:white; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600;
+    cursor:pointer; margin-bottom:16px; transition:opacity .15s;
   }
-  .fetch-btn:hover { opacity: 0.88; }
-  .fetch-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  /* SUMMARY */
-  .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }
-  .summary-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
-  .summary-card .label { font-size: 10px; color: var(--muted); font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 6px; }
-  .summary-card .value { font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500; }
-  .val-green { color: var(--green); } .val-red { color: var(--red); } .val-yellow { color: var(--yellow); }
-
-  /* CLIENT BLOCKS */
-  .client-block { margin-bottom: 14px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-  .client-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 16px; background: var(--surface2); cursor: pointer; user-select: none;
-  }
-  .client-header-left { display: flex; align-items: center; gap: 10px; }
-  .client-dot { width: 8px; height: 8px; border-radius: 50%; }
-  .client-name { font-size: 13px; font-weight: 600; }
-  .client-pct { font-size: 11px; font-family: 'DM Mono', monospace; padding: 2px 10px; border-radius: 20px; }
-  .chevron { font-size: 11px; color: var(--muted); transition: transform 0.2s; }
-  .chevron.open { transform: rotate(180deg); }
-  .client-body { display: none; }
-  .client-body.open { display: block; }
-
-  .col-header { display: grid; grid-template-columns: 1fr 70px 90px 70px; padding: 7px 0; border-top: 1px solid var(--border); background: var(--surface); }
-  .col-h { font-size: 10px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--muted); text-align: center; padding: 0 8px; }
-  .col-h:first-child { text-align: left; padding-left: 16px; }
-
-  .item-row { display: grid; grid-template-columns: 1fr 70px 90px 70px; border-top: 1px solid var(--border); align-items: center; }
-  .item-row:hover { background: rgba(255,255,255,0.015); }
-  .item-name { padding: 9px 16px; font-size: 12.5px; color: #c0c0d8; }
-  .item-meta { padding: 9px 8px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); text-align: center; }
-  .item-real { padding: 9px 12px; font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; text-align: center; }
-  .item-pct { padding: 9px 12px; font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; text-align: center; }
-  .pct-ok { color: var(--green); } .pct-warn { color: var(--yellow); } .pct-bad { color: var(--red); } .pct-na { color: var(--muted); }
+  .fetch-btn:hover { opacity:.88; }
+  .fetch-btn:disabled { opacity:.4; cursor:not-allowed; }
 
   /* STATUS */
   .status-bar {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 16px; margin-bottom: 24px;
-    font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 10px;
-    font-family: 'DM Mono', monospace;
+    background:var(--surface2); border:1px solid var(--border);
+    border-radius:10px; padding:11px 16px; margin-bottom:20px;
+    font-size:12px; color:var(--muted); display:flex; align-items:center; gap:10px;
+    font-family:'DM Mono',monospace;
   }
-  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
-  .status-dot.loading { background: var(--yellow); animation: pulse 1s infinite; }
-  .status-dot.done { background: var(--green); }
-  .status-dot.error { background: var(--red); }
-  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .sdot { width:8px; height:8px; border-radius:50%; background:var(--muted); flex-shrink:0; }
+  .sdot.loading { background:var(--yellow); animation:pulse 1s infinite; }
+  .sdot.done    { background:var(--green); }
+  .sdot.error   { background:var(--red); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  /* SUMMARY */
+  .summary { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:20px; }
+  .sc { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
+  .sc .lbl { font-size:10px; color:var(--muted); font-weight:600; letter-spacing:.8px; text-transform:uppercase; margin-bottom:6px; }
+  .sc .val { font-family:'DM Mono',monospace; font-size:22px; font-weight:500; }
+  .vg{color:var(--green)} .vr{color:var(--red)} .vy{color:var(--yellow)}
+
+  /* CLIENT BLOCKS */
+  .client-block { margin-bottom:12px; border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+  .ch {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 16px; background:var(--surface2); cursor:pointer; user-select:none;
+  }
+  .ch-left { display:flex; align-items:center; gap:10px; }
+  .cdot { width:8px; height:8px; border-radius:50%; }
+  .cname { font-size:13px; font-weight:600; }
+  .cpct { font-size:11px; font-family:'DM Mono',monospace; padding:2px 10px; border-radius:20px; }
+  .chev { font-size:11px; color:var(--muted); transition:transform .2s; }
+  .chev.open { transform:rotate(180deg); }
+  .cb { display:none; }
+  .cb.open { display:block; }
+
+  .col-hdr { display:grid; grid-template-columns:1fr 70px 90px 70px; padding:7px 0; border-top:1px solid var(--border); background:var(--surface); }
+  .col-h { font-size:10px; font-weight:600; letter-spacing:.8px; text-transform:uppercase; color:var(--muted); text-align:center; padding:0 8px; }
+  .col-h:first-child { text-align:left; padding-left:16px; }
+
+  .item-row { display:grid; grid-template-columns:1fr 70px 90px 70px; border-top:1px solid var(--border); align-items:center; }
+  .item-row:hover { background:rgba(255,255,255,.015); }
+  .iname { padding:9px 16px; font-size:12.5px; color:#c0c0d8; }
+  .imeta { padding:9px 8px; font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); text-align:center; }
+  .ireal { padding:9px 12px; font-family:'DM Mono',monospace; font-size:13px; font-weight:500; text-align:center; }
+  .ipct  { padding:9px 12px; font-family:'DM Mono',monospace; font-size:11px; font-weight:500; text-align:center; }
+  .pok{color:var(--green)} .pwarn{color:var(--yellow)} .pbad{color:var(--red)} .pna{color:var(--muted)}
 
   /* EXPORT */
   .export-btn {
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    width: 100%; padding: 13px;
-    background: transparent; border: 1px solid var(--green); border-radius: 10px;
-    color: var(--green); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
-    cursor: pointer; margin-top: 20px; transition: background 0.15s;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    width:100%; padding:13px; background:transparent; border:1px solid var(--green);
+    border-radius:10px; color:var(--green); font-family:'DM Sans',sans-serif;
+    font-size:14px; font-weight:600; cursor:pointer; margin-top:16px; transition:background .15s;
   }
-  .export-btn:hover { background: rgba(55,211,164,0.08); }
+  .export-btn:hover { background:rgba(55,211,164,.08); }
 
   .toast {
-    position: fixed; bottom: 24px; right: 24px;
-    background: var(--surface2); border: 1px solid var(--green);
-    border-radius: 10px; padding: 14px 20px; font-size: 13px; font-weight: 500; color: var(--green);
-    display: none; gap: 8px; align-items: center; box-shadow: 0 8px 32px rgba(0,0,0,0.4); z-index: 999;
+    position:fixed; bottom:24px; right:24px;
+    background:var(--surface2); border:1px solid var(--green);
+    border-radius:10px; padding:14px 20px; font-size:13px; font-weight:500; color:var(--green);
+    display:none; gap:8px; align-items:center; box-shadow:0 8px 32px rgba(0,0,0,.4); z-index:999;
   }
-  .toast.show { display: flex; }
+  .toast.show { display:flex; }
 
-  @media (max-width: 600px) {
-    body { padding: 16px; }
-    .summary { grid-template-columns: repeat(2, 1fr); }
-    .config-row { grid-template-columns: 1fr; }
+  @media(max-width:600px){
+    body{padding:16px;}
+    .summary{grid-template-columns:repeat(2,1fr);}
   }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div>
-    <h1>📊 Auto Report — Content</h1>
-    <p>Puxa automaticamente do ClickUp e YouTube. Semana: domingo → sábado.</p>
-  </div>
-</div>
+<h1>📊 Auto Report — Content</h1>
+<p class="sub">Puxa automaticamente do ClickUp e YouTube. Semana: domingo → sábado.</p>
 
 <!-- WEEK SELECTOR -->
 <div class="week-bar">
-  <label>Semana de:</label>
-  <input type="date" id="weekStart" />
-  <label>até</label>
-  <input type="date" id="weekEnd" readonly />
-  <span id="weekLabel">—</span>
+  <label>Semana:</label>
+  <div class="week-controls">
+    <select id="selWeek">
+      <option value="0">Esta semana</option>
+      <option value="1">Semana passada</option>
+      <option value="2">2 semanas atrás</option>
+      <option value="3">3 semanas atrás</option>
+    </select>
+    <select id="selMonth" style="display:none"></select>
+  </div>
+  <span class="week-range" id="weekRange">—</span>
 </div>
 
-<!-- CONFIG -->
-<div class="config-card">
-  <h3>🔑 Configuração de APIs</h3>
-  <div class="config-row">
-    <label>ClickUp API Token</label>
-    <input type="password" id="clickupToken" placeholder="pk_..." />
-  </div>
-  <div class="config-row">
-    <label>YouTube API Key</label>
-    <input type="password" id="youtubeKey" placeholder="AIza..." />
-  </div>
+<button class="fetch-btn" id="fetchBtn" onclick="runReport()">⚡ Gerar Report</button>
+
+<div class="status-bar">
+  <div class="sdot" id="sdot"></div>
+  <span id="stext">Selecione a semana e clique em Gerar Report.</span>
 </div>
 
-<!-- FETCH -->
-<button class="fetch-btn" onclick="runReport()" id="fetchBtn">
-  ⚡ Gerar Report da Semana
-</button>
-
-<!-- STATUS -->
-<div class="status-bar" id="statusBar">
-  <div class="status-dot" id="statusDot"></div>
-  <span id="statusText">Configure as APIs e clique em Gerar Report.</span>
+<div class="summary" id="summary" style="display:none">
+  <div class="sc"><div class="lbl">Total orçado</div><div class="val" id="sumOrc">—</div></div>
+  <div class="sc"><div class="lbl">Realizado</div><div class="val vg" id="sumReal">—</div></div>
+  <div class="sc"><div class="lbl">% cumprimento</div><div class="val" id="sumPct">—</div></div>
+  <div class="sc"><div class="lbl">Abaixo da meta</div><div class="val vr" id="sumAbaixo">—</div></div>
 </div>
 
-<!-- SUMMARY -->
-<div class="summary" id="summary" style="display:none;">
-  <div class="summary-card">
-    <div class="label">Total orçado</div>
-    <div class="value" id="sumOrc">—</div>
-  </div>
-  <div class="summary-card">
-    <div class="label">Realizado</div>
-    <div class="value val-green" id="sumReal">—</div>
-  </div>
-  <div class="summary-card">
-    <div class="label">% cumprimento</div>
-    <div class="value" id="sumPct">—</div>
-  </div>
-  <div class="summary-card">
-    <div class="label">Abaixo da meta</div>
-    <div class="value val-red" id="sumAbaixo">—</div>
-  </div>
-</div>
-
-<!-- BLOCKS -->
 <div id="blocks"></div>
-
-<button class="export-btn" id="exportBtn" style="display:none;" onclick="exportCSV()">
-  ⬇️ Exportar CSV para Google Sheets
-</button>
-
-<div class="toast" id="toast">✅ CSV gerado! Importe na sua planilha.</div>
+<button class="export-btn" id="exportBtn" style="display:none" onclick="exportCSV()">⬇️ Exportar CSV para Google Sheets</button>
+<div class="toast" id="toast">✅ CSV gerado!</div>
 
 <script>
-// ─── CONFIG ───────────────────────────────────────────────
-const LISTS = {
-  instagram:  { id: '901300920768', name: 'Instagram Turbo',  color: '#E1306C' },
-  victor:     { id: '901314630051', name: 'Victor Peixoto',   color: '#37D3A4' },
-  andre:      { id: '901314629869', name: 'André Musso',      color: '#415FF2' },
-  turbocast:  { id: '901314630142', name: 'Turbo Cast',       color: '#ff8a7a' },
-};
-
-const YT_CHANNELS = {
-  victor:    { handle: '@victor.peixoto',  name: 'Victor Peixoto' },
-  andre:     { handle: '@andremusso1',     name: 'André Musso'    },
-  turbocast: { handle: '@Turbo.podcast',   name: 'Turbo Cast'     },
-};
-
-// Duração em segundos
-const YT_THRESHOLDS = { corte_curto: 120, corte_longo: 600 }; // <2min, 2-10min, >10min = longo
-
 const METAS = {
-  'André Musso':     { 'YT LONGO': 1, 'REELS': 7, 'LINKEDIN': 2, 'THUMB': 3, 'CORTE CURTO': 0, 'CORTE LONGO': 0 },
-  'Victor Peixoto':  { 'YT LONGO': 2, 'LINKEDIN': 2, 'THUMB': 3, 'CORTE CURTO': 0, 'CORTE LONGO': 0 },
-  'Instagram Turbo': { 'REELS': 3, 'CARROSSEL': 10, 'IMG ÚNICA': 0 },
-  'Turbo Cast':      { 'YT LONGO': 1, 'CORTE CURTO': 7, 'CORTE LONGO': 7, 'THUMB': 10 },
+  'André Musso':     { 'YT LONGO':1, 'REELS':7, 'LINKEDIN':2, 'THUMB':3, 'CORTE CURTO':0, 'CORTE LONGO':0 },
+  'Victor Peixoto':  { 'YT LONGO':2, 'LINKEDIN':2, 'THUMB':3, 'CORTE CURTO':0, 'CORTE LONGO':0 },
+  'Instagram Turbo': { 'REELS':3, 'CARROSSEL':10, 'IMG ÚNICA':0 },
+  'Turbo Cast':      { 'YT LONGO':1, 'CORTE CURTO':7, 'CORTE LONGO':7, 'THUMB':10 },
+};
+const CLIENT_COLORS = {
+  'André Musso':'#415FF2','Victor Peixoto':'#37D3A4',
+  'Instagram Turbo':'#E1306C','Turbo Cast':'#ff8a7a',
 };
 
-// Regras por lista: quais tasks contar e quais status
-const RULES = {
-  instagram:  { useSubtasks: true,  statuses: ['postado'], field: 'Formato do post' },
-  victor:     { useSubtasks: false, statuses: ['postado'], field: 'Formato do post',
-                subtaskFormats: ['LINKEDIN'], subtaskStatuses: ['postado'] },
-  andre:      { useSubtasks: false, statuses: ['complete'], field: 'Formato do post',
-                subtaskFormats: ['LINKEDIN', 'REELS', 'IMG ÚNICA'], subtaskStatuses: ['postado'] },
-  turbocast:  { useSubtasks: false, statuses: ['complete'], field: 'Formato do post' },
-};
-
-// ─── STATE ────────────────────────────────────────────────
 let reportData = {};
+let currentPeriod = {};
 
-// ─── WEEK SELECTOR ────────────────────────────────────────
-document.getElementById('weekStart').addEventListener('change', function() {
-  const val = this.value;
-  if (!val) return;
-  // Parse date parts directly to avoid timezone issues
-  const [year, month, day] = val.split('-').map(Number);
-  const start = new Date(year, month - 1, day);
-  if (isNaN(start.getTime())) return;
-
-  // Snap to Sunday of that week
-  const dow = start.getDay();
-  start.setDate(start.getDate() - dow);
-
-  const end = new Date(start);
-  end.setDate(start.getDate() + 6);
-
-  const pad = n => String(n).padStart(2, '0');
-  const fmt = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-
-  this.value = fmt(start);
-  document.getElementById('weekEnd').value = fmt(end);
-
-  const opts = { day: '2-digit', month: 'short' };
-  document.getElementById('weekLabel').textContent =
-    `${start.toLocaleDateString('pt-BR', opts)} → ${end.toLocaleDateString('pt-BR', opts)}`;
-});
-
-// Set default to current week (Sun-Sat)
-(function() {
+// ── Week selector ──────────────────────────────────────
+function getWeekBounds(weeksAgo) {
   const today = new Date();
-  const dow = today.getDay();
-  const sunday = new Date(today);
-  sunday.setDate(today.getDate() - dow);
-  const pad = n => String(n).padStart(2, '0');
-  const fmt = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-  document.getElementById('weekStart').value = fmt(sunday);
-  document.getElementById('weekStart').dispatchEvent(new Event('change'));
-})();
-
-// ─── STATUS BAR ───────────────────────────────────────────
-function setStatus(msg, state = '') {
-  document.getElementById('statusText').textContent = msg;
-  const dot = document.getElementById('statusDot');
-  dot.className = 'status-dot' + (state ? ' ' + state : '');
+  const dow = today.getDay(); // 0=Sun
+  const thisSunday = new Date(today);
+  thisSunday.setDate(today.getDate() - dow - (weeksAgo * 7));
+  thisSunday.setHours(0,0,0,0);
+  const thisSat = new Date(thisSunday);
+  thisSat.setDate(thisSunday.getDate() + 6);
+  return { start: thisSunday, end: thisSat };
 }
 
-// ─── CLICKUP FETCH ────────────────────────────────────────
-async function fetchClickUp(token, listKey) {
-  const list = LISTS[listKey];
-  const rules = RULES[listKey];
-  const startDate = document.getElementById('weekStart').value;
-  const endDate = document.getElementById('weekEnd').value;
+function pad(n){ return String(n).padStart(2,'0'); }
+function fmtDate(d){ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function fmtLabel(d){ return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}); }
 
-  const params = new URLSearchParams({
-    include_closed: true,
-    subtasks: true,
-    date_done_gt: new Date(startDate + 'T00:00:00').getTime(),
-    date_done_lt: new Date(endDate + 'T23:59:59').getTime(),
-  });
-
-  const url = `https://api.clickup.com/api/v2/list/${list.id}/task?${params}`;
-  const res = await fetch(url, { headers: { Authorization: token } });
-  if (!res.ok) throw new Error(`ClickUp error on ${listKey}: ${res.status}`);
-  const data = await res.json();
-  return data.tasks || [];
+function updateWeekRange() {
+  const weeksAgo = parseInt(document.getElementById('selWeek').value);
+  const { start, end } = getWeekBounds(weeksAgo);
+  document.getElementById('weekRange').textContent = `${fmtLabel(start)} → ${fmtLabel(end)}`;
+  return { startDate: fmtDate(start), endDate: fmtDate(end) };
 }
 
-function extractFormat(task) {
-  const cf = task.custom_fields || [];
-  const field = cf.find(f => f.name === 'Formato do post');
-  if (!field || !field.value) return null;
-  // value can be string or array
-  if (typeof field.value === 'string') return field.value.toUpperCase();
-  if (Array.isArray(field.value) && field.value.length > 0) {
-    return (field.value[0].name || field.value[0]).toUpperCase();
-  }
-  return null;
+document.getElementById('selWeek').addEventListener('change', updateWeekRange);
+updateWeekRange();
+
+// ── Status ────────────────────────────────────────────
+function setStatus(msg, state='') {
+  document.getElementById('stext').textContent = msg;
+  document.getElementById('sdot').className = 'sdot' + (state ? ' '+state : '');
 }
 
-function countByFormat(tasks, statuses, onlySubtasks = false, formatFilter = null) {
-  const counts = {};
-  for (const task of tasks) {
-    const isSubtask = !!task.parent;
-    if (onlySubtasks && !isSubtask) continue;
-    if (!onlySubtasks && isSubtask) continue;
-    if (!statuses.includes(task.status?.status?.toLowerCase())) continue;
-    const fmt = extractFormat(task);
-    if (!fmt) continue;
-    if (formatFilter && !formatFilter.includes(fmt)) continue;
-    counts[fmt] = (counts[fmt] || 0) + 1;
-  }
-  return counts;
-}
-
-async function processClickUp(token, listKey) {
-  const tasks = await fetchClickUp(token, listKey);
-  const rules = RULES[listKey];
-  const listName = LISTS[listKey].name;
-  let counts = {};
-
-  if (listKey === 'instagram') {
-    // Only subtasks, status postado
-    counts = countByFormat(tasks, rules.statuses, true);
-  } else if (listKey === 'victor') {
-    // Parent tasks for YT LONGO, postado
-    const parent = countByFormat(tasks, rules.statuses, false);
-    // Subtasks for LINKEDIN, postado
-    const sub = countByFormat(tasks, rules.subtaskStatuses, true, rules.subtaskFormats);
-    counts = { ...parent, ...sub };
-  } else if (listKey === 'andre') {
-    // Parent tasks for YT LONGO, complete
-    const parent = countByFormat(tasks, rules.statuses, false);
-    // Subtasks for LINKEDIN/REELS/IMG, postado
-    const sub = countByFormat(tasks, rules.subtaskStatuses, true, rules.subtaskFormats);
-    counts = { ...parent, ...sub };
-  } else if (listKey === 'turbocast') {
-    // Parent tasks only, complete, all formats
-    counts = countByFormat(tasks, rules.statuses, false);
-  }
-
-  return counts;
-}
-
-// ─── YOUTUBE FETCH ────────────────────────────────────────
-async function getChannelId(apiKey, handle) {
-  const url = `https://www.googleapis.com/youtube/v3/channels?part=id&forHandle=${encodeURIComponent(handle)}&key=${apiKey}`;
-  const res = await fetch(url);
-  const data = await res.json();
-  return data.items?.[0]?.id;
-}
-
-async function fetchYouTubeVideos(apiKey, channelId, publishedAfter, publishedBefore) {
-  // Search for videos in the date range
-  let videos = [];
-  let pageToken = '';
-  do {
-    const params = new URLSearchParams({
-      part: 'id',
-      channelId,
-      type: 'video',
-      publishedAfter: publishedAfter + 'Z',
-      publishedBefore: publishedBefore + 'Z',
-      maxResults: 50,
-      key: apiKey,
-      ...(pageToken ? { pageToken } : {}),
-    });
-    const res = await fetch(`https://www.googleapis.com/youtube/v3/search?${params}`);
-    const data = await res.json();
-    videos = videos.concat(data.items || []);
-    pageToken = data.nextPageToken || '';
-  } while (pageToken);
-
-  if (videos.length === 0) return { 'YT LONGO': 0, 'CORTE LONGO': 0, 'CORTE CURTO': 0 };
-
-  // Get durations
-  const ids = videos.map(v => v.id.videoId).join(',');
-  const detailRes = await fetch(
-    `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${ids}&key=${apiKey}`
-  );
-  const detailData = await detailRes.json();
-
-  const counts = { 'YT LONGO': 0, 'CORTE LONGO': 0, 'CORTE CURTO': 0 };
-  for (const item of detailData.items || []) {
-    const dur = parseISO8601Duration(item.contentDetails.duration);
-    if (dur < YT_THRESHOLDS.corte_curto) counts['CORTE CURTO']++;
-    else if (dur < YT_THRESHOLDS.corte_longo) counts['CORTE LONGO']++;
-    else counts['YT LONGO']++;
-  }
-  return counts;
-}
-
-function parseISO8601Duration(iso) {
-  const match = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
-  if (!match) return 0;
-  return (parseInt(match[1] || 0) * 3600) + (parseInt(match[2] || 0) * 60) + parseInt(match[3] || 0);
-}
-
-// ─── MAIN REPORT ──────────────────────────────────────────
+// ── Report ────────────────────────────────────────────
 async function runReport() {
-  const token = document.getElementById('clickupToken').value.trim();
-  const ytKey = document.getElementById('youtubeKey').value.trim();
-  const startDate = document.getElementById('weekStart').value;
-  const endDate = document.getElementById('weekEnd').value;
-
-  if (!token || !ytKey) {
-    setStatus('Preencha o ClickUp Token e a YouTube API Key.', 'error');
-    return;
-  }
+  const { startDate, endDate } = updateWeekRange();
+  currentPeriod = { startDate, endDate };
 
   document.getElementById('fetchBtn').disabled = true;
   document.getElementById('summary').style.display = 'none';
@@ -436,173 +210,120 @@ async function runReport() {
   reportData = {};
 
   try {
-    // ── ClickUp ──
-    setStatus('Buscando Instagram Turbo no ClickUp...', 'loading');
-    const igCounts = await processClickUp(token, 'instagram');
-
-    setStatus('Buscando Victor Peixoto no ClickUp...', 'loading');
-    const victorCounts = await processClickUp(token, 'victor');
-
-    setStatus('Buscando André Musso no ClickUp...', 'loading');
-    const andreCounts = await processClickUp(token, 'andre');
-
-    setStatus('Buscando Turbo Cast no ClickUp...', 'loading');
-    const castClickupCounts = await processClickUp(token, 'turbocast');
-
-    // ── YouTube ──
-    const publishedAfter = new Date(startDate + 'T00:00:00').toISOString().replace('.000Z', '');
-    const publishedBefore = new Date(endDate + 'T23:59:59').toISOString().replace('.000Z', '');
-
-    setStatus('Buscando vídeos do Victor no YouTube...', 'loading');
-    const victorChId = await getChannelId(ytKey, YT_CHANNELS.victor.handle);
-    const victorYT = await fetchYouTubeVideos(ytKey, victorChId, publishedAfter, publishedBefore);
-
-    setStatus('Buscando vídeos do André no YouTube...', 'loading');
-    const andreChId = await getChannelId(ytKey, YT_CHANNELS.andre.handle);
-    const andreYT = await fetchYouTubeVideos(ytKey, andreChId, publishedAfter, publishedBefore);
-
-    setStatus('Buscando vídeos do Turbo Cast no YouTube...', 'loading');
-    const castChId = await getChannelId(ytKey, YT_CHANNELS.turbocast.handle);
-    const castYT = await fetchYouTubeVideos(ytKey, castChId, publishedAfter, publishedBefore);
-
-    // ── Merge ──
-    reportData = {
-      'André Musso':     { ...andreCounts,
-        'CORTE CURTO': andreYT['CORTE CURTO'],
-        'CORTE LONGO': andreYT['CORTE LONGO'] },
-      'Victor Peixoto':  { ...victorCounts,
-        'CORTE CURTO': victorYT['CORTE CURTO'],
-        'CORTE LONGO': victorYT['CORTE LONGO'] },
-      'Instagram Turbo': igCounts,
-      'Turbo Cast':      { ...castClickupCounts,
-        'CORTE CURTO': castYT['CORTE CURTO'],
-        'CORTE LONGO': castYT['CORTE LONGO'],
-        'YT LONGO': (castClickupCounts['YT LONGO'] || 0) || castYT['YT LONGO'] },
-    };
-
+    setStatus('Buscando dados...', 'loading');
+    const res = await fetch(`/api/report?startDate=${startDate}&endDate=${endDate}`);
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Erro desconhecido');
+    reportData = data.report;
     renderReport();
-    setStatus(`Report gerado com sucesso! Semana ${startDate} → ${endDate}`, 'done');
-  } catch (err) {
+    setStatus(`Report gerado! ${startDate} → ${endDate}`, 'done');
+  } catch(err) {
     setStatus('Erro: ' + err.message, 'error');
-    console.error(err);
   } finally {
     document.getElementById('fetchBtn').disabled = false;
   }
 }
 
-// ─── RENDER ───────────────────────────────────────────────
-const CLIENT_COLORS = {
-  'André Musso': '#415FF2', 'Victor Peixoto': '#37D3A4',
-  'Instagram Turbo': '#E1306C', 'Turbo Cast': '#ff8a7a',
-};
-
-function getPctClass(pct) {
-  if (pct === null) return 'pct-na';
-  if (pct >= 100) return 'pct-ok';
-  if (pct >= 70) return 'pct-warn';
-  return 'pct-bad';
+// ── Render ────────────────────────────────────────────
+function pctClass(p) {
+  if (p === null) return 'pna';
+  if (p >= 100)   return 'pok';
+  if (p >= 70)    return 'pwarn';
+  return 'pbad';
 }
 
 function renderReport() {
   const container = document.getElementById('blocks');
   container.innerHTML = '';
-  let totalOrc = 0, totalReal = 0, totalAbaixo = 0;
+  let totalOrc=0, totalReal=0, totalAbaixo=0;
 
-  Object.entries(reportData).forEach(([clientName, counts], ci) => {
-    const metas = METAS[clientName] || {};
-    const color = CLIENT_COLORS[clientName] || '#888';
+  Object.entries(reportData).forEach(([client, counts], ci) => {
+    const metas = METAS[client] || {};
+    const color = CLIENT_COLORS[client] || '#888';
 
-    let clientOrc = 0, clientReal = 0;
-    Object.entries(metas).forEach(([fmt, meta]) => {
-      if (meta > 0) { clientOrc += meta; clientReal += Math.min(counts[fmt] || 0, 999); }
+    let cOrc=0, cReal=0;
+    Object.entries(metas).forEach(([fmt,meta]) => {
+      if (meta > 0) { cOrc += meta; cReal += (counts[fmt]||0); }
     });
-    const clientPct = clientOrc > 0 ? Math.round((clientReal / clientOrc) * 100) : null;
-    const pctColor = clientPct === null ? '#888' : clientPct >= 100 ? '#37D3A4' : clientPct >= 70 ? '#ffd047' : '#ff5a5a';
+    const cPct = cOrc > 0 ? Math.round((cReal/cOrc)*100) : null;
+    const pColor = cPct===null?'#888':cPct>=100?'#37D3A4':cPct>=70?'#ffd047':'#ff5a5a';
+
+    const rows = Object.entries(metas).map(([fmt,meta]) => {
+      const real = counts[fmt] || 0;
+      const pct  = meta > 0 ? Math.round((real/meta)*100) : null;
+      if (meta > 0) { totalOrc+=meta; totalReal+=real; if(real<meta) totalAbaixo++; }
+      const rColor = pct!==null&&pct>=100?'var(--green)':pct!==null&&pct<70?'var(--red)':'var(--text)';
+      return `
+        <div class="item-row">
+          <div class="iname">${fmt}</div>
+          <div class="imeta">${meta>0?meta:'—'}</div>
+          <div class="ireal" style="color:${rColor}">${real}</div>
+          <div class="ipct ${pctClass(pct)}">${pct!==null?pct+'%':'—'}</div>
+        </div>`;
+    }).join('');
 
     const block = document.createElement('div');
     block.className = 'client-block';
     block.innerHTML = `
-      <div class="client-header" onclick="toggleBlock(${ci})">
-        <div class="client-header-left">
-          <div class="client-dot" style="background:${color}"></div>
-          <span class="client-name">${clientName}</span>
-          <span class="client-pct" style="color:${pctColor};background:${pctColor}22;border:1px solid ${pctColor}44;">
-            ${clientPct !== null ? clientPct + '%' : '—'}
+      <div class="ch" onclick="toggle(${ci})">
+        <div class="ch-left">
+          <div class="cdot" style="background:${color}"></div>
+          <span class="cname">${client}</span>
+          <span class="cpct" style="color:${pColor};background:${pColor}22;border:1px solid ${pColor}44">
+            ${cPct!==null?cPct+'%':'—'}
           </span>
         </div>
-        <span class="chevron open" id="chev-${ci}">▼</span>
+        <span class="chev open" id="chev-${ci}">▼</span>
       </div>
-      <div class="client-body open" id="body-${ci}">
-        <div class="col-header">
+      <div class="cb open" id="cb-${ci}">
+        <div class="col-hdr">
           <div class="col-h">Formato</div>
           <div class="col-h">Meta</div>
           <div class="col-h">Realizado</div>
           <div class="col-h">%</div>
         </div>
-        ${Object.entries(metas).map(([fmt, meta]) => {
-          const real = counts[fmt] || 0;
-          const pct = meta > 0 ? Math.round((real / meta) * 100) : null;
-          const pctClass = getPctClass(pct);
-          if (meta > 0) { totalOrc += meta; totalReal += real; if (real < meta) totalAbaixo++; }
-          return `
-            <div class="item-row">
-              <div class="item-name">${fmt}</div>
-              <div class="item-meta">${meta > 0 ? meta : '—'}</div>
-              <div class="item-real" style="color:${pct !== null && pct >= 100 ? '#37D3A4' : pct !== null && pct < 70 ? '#ff5a5a' : '#f0f0f8'}">${real}</div>
-              <div class="item-pct ${pctClass}">${pct !== null ? pct + '%' : '—'}</div>
-            </div>
-          `;
-        }).join('')}
-      </div>
-    `;
+        ${rows}
+      </div>`;
     container.appendChild(block);
   });
 
-  // Summary
-  const globalPct = totalOrc > 0 ? Math.round((totalReal / totalOrc) * 100) : 0;
+  const gPct = totalOrc>0?Math.round((totalReal/totalOrc)*100):0;
   document.getElementById('sumOrc').textContent = totalOrc;
   document.getElementById('sumReal').textContent = totalReal;
-  const pctEl = document.getElementById('sumPct');
-  pctEl.textContent = globalPct + '%';
-  pctEl.className = 'value ' + (globalPct >= 100 ? 'val-green' : globalPct >= 70 ? 'val-yellow' : 'val-red');
+  const pEl = document.getElementById('sumPct');
+  pEl.textContent = gPct+'%';
+  pEl.className = 'val '+(gPct>=100?'vg':gPct>=70?'vy':'vr');
   document.getElementById('sumAbaixo').textContent = totalAbaixo;
   document.getElementById('summary').style.display = 'grid';
   document.getElementById('exportBtn').style.display = 'flex';
 }
 
-function toggleBlock(ci) {
-  document.getElementById('body-' + ci).classList.toggle('open');
-  document.getElementById('chev-' + ci).classList.toggle('open');
+function toggle(ci) {
+  document.getElementById('cb-'+ci).classList.toggle('open');
+  document.getElementById('chev-'+ci).classList.toggle('open');
 }
 
-// ─── EXPORT ───────────────────────────────────────────────
+// ── Export ────────────────────────────────────────────
 function exportCSV() {
-  const start = document.getElementById('weekStart').value;
-  const end = document.getElementById('weekEnd').value;
-  let csv = `REPORT CONTENT — ${start} a ${end}\n`;
-  csv += `Cliente,Formato,Meta/sem,Realizado,% Cumprimento,Status\n`;
-
-  Object.entries(reportData).forEach(([clientName, counts]) => {
-    const metas = METAS[clientName] || {};
-    Object.entries(metas).forEach(([fmt, meta]) => {
-      const real = counts[fmt] || 0;
-      const pct = meta > 0 ? Math.round((real / meta) * 100) + '%' : '—';
-      const status = meta > 0 ? (real >= meta ? 'OK' : real >= meta * 0.7 ? 'PARCIAL' : 'ABAIXO') : '—';
-      csv += `"${clientName}","${fmt}",${meta > 0 ? meta : '—'},${real},${pct},${status}\n`;
+  const { startDate, endDate } = currentPeriod;
+  let csv = `REPORT CONTENT — ${startDate} a ${endDate}\nCliente,Formato,Meta/sem,Realizado,% Cumprimento,Status\n`;
+  Object.entries(reportData).forEach(([client, counts]) => {
+    const metas = METAS[client]||{};
+    Object.entries(metas).forEach(([fmt,meta]) => {
+      const real = counts[fmt]||0;
+      const pct  = meta>0?Math.round((real/meta)*100)+'%':'—';
+      const status = meta>0?(real>=meta?'OK':real>=meta*.7?'PARCIAL':'ABAIXO'):'—';
+      csv += `"${client}","${fmt}",${meta>0?meta:'—'},${real},${pct},${status}\n`;
     });
   });
-
-  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
+  const blob = new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
   const a = document.createElement('a');
-  a.href = url;
-  a.download = `report-content-${start}.csv`;
+  a.href = URL.createObjectURL(blob);
+  a.download = `report-content-${startDate}.csv`;
   a.click();
-  URL.revokeObjectURL(url);
-
-  const toast = document.getElementById('toast');
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 3500);
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
 }
 </script>
 </body>
