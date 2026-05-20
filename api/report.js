@@ -42,17 +42,32 @@ function getFormat(task) {
   const cf = task.custom_fields || [];
   const field = cf.find(f => f.name === 'Formato do post');
   if (!field) return null;
-  // dropdown: value is the option id, type_config.options has the labels
-  if (field.type === 'drop_down' || field.type === 'dropdown') {
-    const opts = field.type_config?.options || [];
-    const selected = opts.find(o => o.orderindex === field.value || o.id === field.value);
-    return selected ? selected.name.toUpperCase() : null;
+
+  // value is null or undefined = not filled
+  if (field.value === null || field.value === undefined) return null;
+
+  const opts = field.type_config?.options || [];
+
+  // ClickUp dropdown returns value as orderindex (integer)
+  // Compare as numbers to be safe
+  if (typeof field.value === 'number' || typeof field.value === 'string') {
+    const valNum = parseInt(field.value, 10);
+    if (!isNaN(valNum)) {
+      const selected = opts.find(o => parseInt(o.orderindex, 10) === valNum);
+      if (selected) return selected.name.toUpperCase();
+    }
+    // fallback: try matching by id
+    const byId = opts.find(o => o.id === field.value);
+    if (byId) return byId.name.toUpperCase();
+    // fallback: maybe value IS already the name
+    if (typeof field.value === 'string') return field.value.toUpperCase();
   }
-  // fallback
-  if (typeof field.value === 'string') return field.value.toUpperCase();
-  if (Array.isArray(field.value) && field.value[0]) {
-    return (field.value[0].name || field.value[0]).toUpperCase();
+
+  // Array fallback
+  if (Array.isArray(field.value) && field.value.length > 0) {
+    return (field.value[0].name || String(field.value[0])).toUpperCase();
   }
+
   return null;
 }
 
@@ -98,6 +113,9 @@ async function processClickUp(startTs, endTs) {
 
   // TurboCast: parent = complete
   const cast = countFormats(castTasks, { onlySubtasks: false, statuses: ['complete'] });
+
+  // Debug log pra conferência
+  console.log('ClickUp counts:', JSON.stringify({ ig, victor, andre, cast }, null, 2));
 
   return { ig, victor, andre, cast };
 }
@@ -146,6 +164,8 @@ async function fetchYTVideos(channelId, publishedAfter, publishedBefore) {
     else if (dur < CORTE_LONGO_MAX) counts['CORTE LONGO']++;
     else                            counts['YT LONGO']++;
   }
+
+  console.log(`YouTube counts for channel ${channelId}:`, counts);
   return counts;
 }
 
